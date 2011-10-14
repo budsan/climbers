@@ -1,0 +1,3 @@
+[submodule "gameframework"]
+	path = gameframework
+	url = https://github.com/budsan/gameframework/
