@@ -1,0 +1,13 @@
+ANIM "Idle" "mario" 0
+0 0 16 32 8 16 1000
+ANIM "Walk" "mario" 0
+16 0 16 32 8 16 100
+32 0 16 32 8 16 100
+ANIM "Turn" "mario" 0
+48 0 16 32 8 16 1000
+ANIM "Jump" "mario" 0
+64 0 16 32 8 16 1000
+ANIM "Crouch" "mario" 0
+80 10 16 22 8 6 1000
+ANIM "OnWall" "mario" 0
+96 0 16 32 8 16 1000
