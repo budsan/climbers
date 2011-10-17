@@ -2,16 +2,29 @@
 
 #include <iostream>
 
-#include "log.h"
+#include "gameframework/log.h"
+#include "gameframework/settings.h"
+
 #include "enginestate.h"
 #include "splashstate.h"
 #include "keys.h"
 
-#include "settings.h"
+#define GAME_NAME "Climbers"
+#define GAME_VERSION "0.1"
 
 Climbers::Climbers()
 {
 
+}
+
+const char *Climbers::getName()
+{
+    return GAME_NAME;
+}
+
+const char *Climbers::getVersion()
+{
+    return GAME_VERSION;
 }
 
 void Climbers::Configure()
@@ -20,27 +33,38 @@ void Climbers::Configure()
 	setStableGameTime(false);
 	ChangeState(new EngineState());
 
+	Keybinds k(NUMPLAYERS, K_SIZE);
+	k[0][K_LEFT ].setDefault(SDLK_LEFT);
+	k[0][K_RIGHT].setDefault(SDLK_RIGHT);
+	k[0][K_DOWN ].setDefault(SDLK_DOWN);
+	k[0][K_UP   ].setDefault(SDLK_UP);
+	k[0][K_JUMP ].setDefault(SDLK_END);
+	k[0][K_SPECIAL].setDefault(SDLK_DELETE);
+
+	k[1][K_LEFT ].setDefault(SDLK_a);
+	k[1][K_RIGHT].setDefault(SDLK_d);
+	k[1][K_DOWN ].setDefault(SDLK_s);
+	k[1][K_UP   ].setDefault(SDLK_w);
+	k[1][K_JUMP ].setDefault(SDLK_h);
+	k[1][K_SPECIAL].setDefault(SDLK_g);
+
+	mySettings->setKeybinds(k);
+	mySettings->get("ScreenWidth" )->set(800);
+	mySettings->get("ScreenHeight")->set(600);
+	mySettings->get("Fullscreen"  )->set(false);
+}
+
+void Climbers::Load()
+{
 	if (!frames.LoadFont("data/font/SketchRockwell-Bold.ttf"))
 	{
 		LOG << "ERROR: Loading frames font" << std::endl;
 	}
+}
 
-	Keybinds kb(NUMPLAYERS, K_SIZE);
-	kb[0][K_LEFT ].setDefault(SDLK_LEFT);
-	kb[0][K_RIGHT].setDefault(SDLK_RIGHT);
-	kb[0][K_DOWN ].setDefault(SDLK_DOWN);
-	kb[0][K_UP   ].setDefault(SDLK_UP);
-	kb[0][K_JUMP ].setDefault(SDLK_END);
-	kb[0][K_SPECIAL].setDefault(SDLK_DELETE);
+void Climbers::Unload()
+{
 
-	kb[1][K_LEFT ].setDefault(SDLK_a);
-	kb[1][K_RIGHT].setDefault(SDLK_d);
-	kb[1][K_DOWN ].setDefault(SDLK_s);
-	kb[1][K_UP   ].setDefault(SDLK_w);
-	kb[1][K_JUMP ].setDefault(SDLK_h);
-	kb[1][K_SPECIAL].setDefault(SDLK_g);
-
-	mySettings->setKeybinds(kb);
 }
 
 void Climbers::Update(float GameTime)

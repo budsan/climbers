@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gamestate.h"
+#include "gameframework/gamestate.h"
 #include "logic/world.h"
 
 class EngineState : public GameState

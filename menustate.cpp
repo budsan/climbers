@@ -1,6 +1,8 @@
 #include "menustate.h"
-#include "game.h"
 #include "enginestate.h"
+
+#include "gameframework/game.h"
+
 #include <iostream>
 
 MenuState:: MenuState()

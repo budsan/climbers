@@ -1,6 +1,6 @@
 #pragma once
-#include "game.h"
-#include "graphics/tools/frameshud.h"
+#include "gameframework/game.h"
+#include "gameframework/graphics/tools/frameshud.h"
 
 class Climbers : public Game
 {
@@ -9,8 +9,15 @@ public:
 
 protected:
     void Configure();
+
+    void   Load();
+    void Unload();
+
     void Update(float GameTime);
     void Draw();
+
+    const char *getName();
+    const char *getVersion();
 
     FramesHUD frames;
 };

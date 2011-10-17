@@ -1,16 +1,15 @@
 #include "splashstate.h"
 #include "menustate.h"
 
-#include "game.h"
-#include "audio/emyl.h"
-#include "graphics/screen.h"
-#include "graphics/texturemanager.h"
-#include "graphics/color.h"
+#include "gameframework/game.h"
+#include "gameframework/audio/emyl.h"
+#include "gameframework/graphics/screen.h"
+#include "gameframework/graphics/texturemanager.h"
+#include "gameframework/graphics/color.h"
 
 #include <iostream>
 #define _USE_MATH_DEFINES
 #include <cmath>
-
 
 #define ACUMM_NEW_FRAME_MULT 0.15f
 #define ACUMM_OLD_FRAME_MULT (1.0f-ACUMM_NEW_FRAME_MULT)

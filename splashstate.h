@@ -1,13 +1,12 @@
 #pragma once
 
-#include "defines.h"
-#include "gamestate.h"
+#include "gameframework/gamestate.h"
 
-#include "graphics/screen.h"
-#include "graphics/texturemanager.h"
-#include "graphics/color.h"
+#include "gameframework/graphics/screen.h"
+#include "gameframework/graphics/texturemanager.h"
+#include "gameframework/graphics/color.h"
 
-#include "audio/emyl.h"
+#include "gameframework/audio/emyl.h"
 
 class SplashState : public GameState
 {
