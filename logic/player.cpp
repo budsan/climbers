@@ -1,5 +1,7 @@
 #include "player.h"
 
+#include "keys.h"
+
 #include "log.h"
 #include "input/input.h"
 #include "world.h"

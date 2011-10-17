@@ -10,10 +10,13 @@ SOURCES += \
     logic/tilemapcharacter.cpp \
     climbers.cpp \
     splashstate.cpp \
-    menustate.cpp
+    menustate.cpp \
+    logic/randomtowertilemap.cpp
     
 HEADERS += \
     enginestate.h \
     climbers.h \
     splashstate.h \
-    menustate.h
+    menustate.h \
+    keys.h \
+    logic/randomtowertilemap.h
