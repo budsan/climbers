@@ -1,6 +1,44 @@
 #include "tilemapcharacter.h"
 #include "world.h"
-#include "graphics/color.h"
+
+#include "gameframework/graphics/color.h"
+#include "gameframework/math/ray.h"
+
+class TilemapCollider : public math::grid2_traversal<float>
+{
+public:
+    TilemapCollider(
+            TilemapCharacter &ch,
+            const math::vec2f &orig,
+            const math::vec2f &dest);
+protected:
+    void next(const vec2i &voxel, float tcurr);
+    math::vec2f pos(float tcurr)
+    {
+        float tsize = ch.parent.tileSize();
+        const math::ray2f &r = ray();
+        return r.p*tsize + r.v*(tcurr/r.v.module())*tsize;
+    }
+
+private:
+    TilemapCharacter &ch;
+};
+
+TilemapCollider::TilemapCollider(
+        TilemapCharacter &ch,
+        const math::vec2f &orig,
+        const math::vec2f &dest)
+    : ch(ch), base(orig/ch.parent.tileSize(), dest/ch.parent.tileSize())
+{
+
+}
+
+void TilemapCollider::next(const vec2i &voxel, float tcurr)
+{
+
+}
+
+//---------------------------------------------------------------------------//
 
 TilemapCharacter::TilemapCharacter(Tilemap &parent)
 	: siz(0,0), cen(0,0),
@@ -54,6 +92,9 @@ void TilemapCharacter::Update(float GameTime)
 	if (vel.x < -vel_lim.x) vel.x = -vel_lim.x;
 	if (vel.y >  vel_lim.y) vel.y =  vel_lim.y;
 	if (vel.y < -vel_lim.y) vel.y = -vel_lim.y;
+
+
+
 
 
 	//Obtenemos el vector direccion para saber hacia donde nos dirigimos

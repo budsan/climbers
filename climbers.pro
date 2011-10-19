@@ -19,4 +19,9 @@ HEADERS += \
     splashstate.h \
     menustate.h \
     keys.h \
-    logic/randomtowertilemap.h
+    logic/randomtowertilemap.h \
+    logic/world.h \
+    logic/tilemapcharacter.h \
+    logic/tilemap.h \
+    logic/player.h
+

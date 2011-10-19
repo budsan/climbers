@@ -8,7 +8,7 @@ class World;
 class Tilemap
 {
 public:
-	Tilemap(float unitsPerTile);
+        Tilemap(float unitsPerTile);
 
 	virtual void setColl(int x, int y, bool col) = 0; //set tile collisionable
 	virtual bool  isColl(int x, int y) = 0; //is collisionable
@@ -25,6 +25,8 @@ public:
 	float Left(int x);
 	float Right(int x);
 
+        float tileSize() {return myTileSize;}
+
 protected:
-	float unitsPerTile;
+        float myTileSize;
 };

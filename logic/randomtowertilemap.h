@@ -11,7 +11,7 @@ class World;
 class RandomTower : public Tilemap
 {
 public:
-	RandomTower(float unitsPerTile);
+        RandomTower(float myTileSize);
 
 	void Init(int seed, int wide);
 	void Update(float GameTime);
@@ -34,6 +34,8 @@ private:
 	void drawDeletedTiles(int y);
 
 	void testRowY(int y);
+        void rebuildRowY(int y);
+
 	void set(int x, int y, bool col); //set tile collisionable
 	bool get(int i, int j);
 };

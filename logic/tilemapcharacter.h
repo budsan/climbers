@@ -37,4 +37,6 @@ protected:
 	Tilemap &parent;
 
 	virtual void preDrawing();
+
+        friend class TilemapCollider;
 };

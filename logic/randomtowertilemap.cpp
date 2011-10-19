@@ -38,7 +38,7 @@ bool RandomTower::isColl(int x, int y)
 {
 	if ( y < 0 ) return true;
 	if ( x < 0  || x >= sizes.x ) return false;
-	testRowY(y);
+	if(!testRowY(y)) rebuildRowY(y);
 
 	return get(x, y%sizes.y);
 }
@@ -59,14 +59,14 @@ void RandomTower::Draw(const math::bbox2f &screen)
 		for (int i = start.x; i < end.x; ++i)
 		{
 			math::bbox2f quad(
-				math::vec2f(i,j)*unitsPerTile,
-				math::vec2f(i+1,j+1)*unitsPerTile);
+						math::vec2f(i,j)*myTileSize,
+						math::vec2f(i+1,j+1)*myTileSize);
 
-			if (isColl(i,j)) 
+			if (isColl(i,j))
 			{
-					glColor(rgb(0.400f, 0.275f, 0.195f));
-					draw(quad);
-			} 
+				glColor(rgb(0.400f, 0.275f, 0.195f));
+				draw(quad);
+			}
 		}
 	}
 }
@@ -74,42 +74,44 @@ void RandomTower::Draw(const math::bbox2f &screen)
 void RandomTower::testRowY(int y)
 {
 	int row = y % sizes.y;
-	if (rowsid[row] != y)
-	{
-		rowsid[row] = y;
-		for (int i = 0; i < sizes.x; i++) set(i, row, false);
-		unsigned int ydiv = y/5, ymod = y%5;
-		unsigned long yseed = ((unsigned long)(ydiv))<<16|((unsigned long)(seed&0xFFFF));
-		std::mt19937 random(yseed);
-		if (ymod == (3+random()%2))
-		{
-			int x = 0;
-			int xmax = sizes.x - 3;
-			while (x < xmax)
-			{
-				x += (random()%16) + 3;
-				int l = x + (random()%3) + 3;
-				if ( l >= xmax ) break;
-				while (x < l)
-				{
-					set(x, row, true);
-					x++;
-				}
+	return rowsid[row] == y;
+}
 
-				//REDESTROY TILES
-				std::map<int, std::map<int, float> >::iterator line = deletedTiles.find(y);
-				if (line != deletedTiles.end())
+void RandomTower::rebuildRowY(int y)
+{
+	int row = y % sizes.y;
+	rowsid[row] = y;
+	for (int i = 0; i < sizes.x; i++) set(i, row, false);
+	unsigned int ydiv = y/5, ymod = y%5;
+	unsigned long yseed = ((unsigned long)(ydiv))<<16|((unsigned long)(seed&0xFFFF));
+	std::mt19937 random(yseed);
+	if (ymod == (3+random()%2))
+	{
+		int x = 0;
+		int xmax = sizes.x - 3;
+		while (x < xmax)
+		{
+			x += (random()%16) + 3;
+			int l = x + (random()%3) + 3;
+			if ( l >= xmax ) break;
+			while (x < l)
+			{
+				set(x, row, true);
+				x++;
+			}
+
+			//REDESTROY TILES
+			std::map<int, std::map<int, float> >::iterator line = deletedTiles.find(y);
+			if (line != deletedTiles.end())
+			{
+				std::map<int, float>::iterator it = line->second.begin();
+				for (;it != line->second.end(); it++)
 				{
-					std::map<int, float>::iterator it = line->second.begin();
-					for (;it != line->second.end(); it++)
-					{
-						set(it->first, row, false);
-					}
+					set(it->first, row, false);
 				}
 			}
 		}
 	}
-
 }
 
 void RandomTower::addDeletedTile(int x, int y)
@@ -159,8 +161,8 @@ void RandomTower::drawDeletedTiles(int y)
 				int i = it->first;
 				int j = y;
 				math::bbox2f quad(
-					math::vec2f(i,j)*unitsPerTile,
-					math::vec2f(i+1,j+1)*unitsPerTile);
+							math::vec2f(i,j)*myTileSize,
+							math::vec2f(i+1,j+1)*myTileSize);
 
 				glColor(rgba(0.400f, 0.275f, 0.195f, 1.0f - it->second));
 				draw(quad);
