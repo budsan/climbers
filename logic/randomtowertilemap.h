@@ -33,7 +33,7 @@ private:
 	void updateDeletedTiles(float GameTime);
 	void drawDeletedTiles(int y);
 
-	void testRowY(int y);
+	bool testRowY(int y);
         void rebuildRowY(int y);
 
 	void set(int x, int y, bool col); //set tile collisionable

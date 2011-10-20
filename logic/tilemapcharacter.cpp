@@ -7,33 +7,29 @@
 class TilemapCollider : public math::grid2_traversal<float>
 {
 public:
-    TilemapCollider(
-            TilemapCharacter &ch,
-            const math::vec2f &orig,
-            const math::vec2f &dest);
+	TilemapCollider(TilemapCharacter &ch,
+			const math::vec2f &orig,
+			const math::vec2f &dest);
 protected:
-    void next(const vec2i &voxel, float tcurr);
-    math::vec2f pos(float tcurr)
-    {
-        float tsize = ch.parent.tileSize();
-        const math::ray2f &r = ray();
-        return r.p*tsize + r.v*(tcurr/r.v.module())*tsize;
-    }
+	void next(const math::vec2i &voxel, float tcurr);
+	math::vec2f pos(float tcurr)
+	{return ray2().p + ray2().v*tcurr;}
 
 private:
-    TilemapCharacter &ch;
+	TilemapCharacter &ch;
 };
 
-TilemapCollider::TilemapCollider(
-        TilemapCharacter &ch,
-        const math::vec2f &orig,
-        const math::vec2f &dest)
-    : ch(ch), base(orig/ch.parent.tileSize(), dest/ch.parent.tileSize())
+TilemapCollider::TilemapCollider(TilemapCharacter &ch,
+				 const math::vec2f &orig,
+				 const math::vec2f &dest)
+	: math::grid2_traversal<float>(math::vec2f(ch.parent.tileSize(),
+						   ch.parent.tileSize()),
+				       orig, dest), ch(ch)
 {
 
 }
 
-void TilemapCollider::next(const vec2i &voxel, float tcurr)
+void TilemapCollider::next(const math::vec2i &voxel, float tcurr)
 {
 
 }
@@ -118,9 +114,9 @@ void TilemapCharacter::Update(float GameTime)
 	{
 		//le restamos a la Y la mitad de su tamaño para obtener la Y inferior del sprite
 		int yo = parent.tilePosY(pos0.y - scen.y),
-		    yn = parent.tilePosY(posf.y - scen.y),
-		    xl = parent.tilePosX(pos0.x -  cen.x + 2),
-		    xr = parent.tilePosX(pos0.x + scen.x - 2);
+				yn = parent.tilePosY(posf.y - scen.y),
+				xl = parent.tilePosX(pos0.x -  cen.x + 2),
+				xr = parent.tilePosX(pos0.x + scen.x - 2);
 		for (int y = yo; y >= yn; y--)
 		{
 			for (int x = xl; x <= xr; x++)
@@ -139,9 +135,9 @@ void TilemapCharacter::Update(float GameTime)
 	{
 		//le sumamos a la Y la mitad de su tamaño para obtener la Y superior del sprite
 		int yo = parent.tilePosY(pos0.y +  cen.y),
-		    yn = parent.tilePosY(posf.y +  cen.y),
-		    xl = parent.tilePosX(pos0.x -  cen.x + 2),
-		    xr = parent.tilePosX(pos0.x + scen.x - 2);
+				yn = parent.tilePosY(posf.y +  cen.y),
+				xl = parent.tilePosX(pos0.x -  cen.x + 2),
+				xr = parent.tilePosX(pos0.x + scen.x - 2);
 		for (int y = yo; y <= yn; y++)
 		{
 			for (int x = xl; x <= xr; x++)
@@ -149,21 +145,21 @@ void TilemapCharacter::Update(float GameTime)
 				if (parent.isColl(x,y) && onUpCollision(x, y))
 				{
 					posf.y = parent.Bottom(y) - cen.y;
-					goto vert_exit;	
+					goto vert_exit;
 				}
 			}
 		}
 
 		noUpCollision();
 	}
-	vert_exit:
+vert_exit:
 
 	if (direction.x < 0) //Vamos hacia la izquierda
 	{
 		int xo = parent.tilePosX(pos0.x -  cen.x),
-		    xn = parent.tilePosX(posf.x -  cen.x),
-		    yb = parent.tilePosY(pos0.y - scen.y + 2),
-		    yt = parent.tilePosY(pos0.y +  cen.y - 2);
+				xn = parent.tilePosX(posf.x -  cen.x),
+				yb = parent.tilePosY(pos0.y - scen.y + 2),
+				yt = parent.tilePosY(pos0.y +  cen.y - 2);
 		for (int x = xo; x >= xn; x--)
 		{
 			for (int y = yb; y <= yt; y++)
@@ -181,9 +177,9 @@ void TilemapCharacter::Update(float GameTime)
 	else if (direction.x > 0) //Vamos hacia la derecha
 	{
 		int xo = parent.tilePosX(pos0.x + scen.x),
-		    xn = parent.tilePosX(posf.x + scen.x),
-		    yb = parent.tilePosY(pos0.y - scen.y + 2),
-		    yt = parent.tilePosY(pos0.y +  cen.y - 2);
+				xn = parent.tilePosX(posf.x + scen.x),
+				yb = parent.tilePosY(pos0.y - scen.y + 2),
+				yt = parent.tilePosY(pos0.y +  cen.y - 2);
 		for (int x = xo; x <= xn; x++)
 		{
 			for (int y = yb; y <= yt; y++)
@@ -191,14 +187,14 @@ void TilemapCharacter::Update(float GameTime)
 				if (parent.isColl(x,y) && onRightCollision(x, y))
 				{
 					posf.x = parent.Left(x) - scen.x;
-					goto horz_exit;	
+					goto horz_exit;
 				}
 			}
 		}
 
 		noRightCollision();
 	}
-	horz_exit:
+horz_exit:
 
 	pos = posf; //asignamos la posicion final a pos
 	SpriteAnim::Update(GameTime * animVelFactor);

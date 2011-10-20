@@ -71,7 +71,7 @@ void RandomTower::Draw(const math::bbox2f &screen)
 	}
 }
 
-void RandomTower::testRowY(int y)
+bool RandomTower::testRowY(int y)
 {
 	int row = y % sizes.y;
 	return rowsid[row] == y;
