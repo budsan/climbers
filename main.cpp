@@ -3,7 +3,7 @@
 int main(int argc, char *argv[])
 {
 	Game* game = new Climbers();
-        if (game->Init()) game->Run();
+        if (game->init()) game->run();
 	delete game;
 
 	return 0;

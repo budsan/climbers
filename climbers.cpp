@@ -27,11 +27,11 @@ const char *Climbers::getVersion()
     return GAME_VERSION;
 }
 
-void Climbers::Configure()
+void Climbers::configure()
 {
 	setFramesPerSecond(0);
-	setStableGameTime(false);
-	ChangeState(new EngineState());
+    setStableDeltaTime(false);
+    changeState(new EngineState());
 
 	Keybinds k(NUMPLAYERS, K_SIZE);
 	k[0][K_LEFT ].setDefault(SDLK_LEFT);
@@ -48,33 +48,33 @@ void Climbers::Configure()
 	k[1][K_JUMP ].setDefault(SDLK_h);
 	k[1][K_SPECIAL].setDefault(SDLK_g);
 
-	mySettings->setKeybinds(k);
-	mySettings->get("ScreenWidth" )->set(800);
-	mySettings->get("ScreenHeight")->set(600);
-	mySettings->get("Fullscreen"  )->set(false);
+    m_settings->setKeybinds(k);
+    m_settings->get("ScreenWidth" )->set(800);
+    m_settings->get("ScreenHeight")->set(600);
+    m_settings->get("Fullscreen"  )->set(false);
 }
 
-void Climbers::Load()
+void Climbers::load()
 {
-	if (!frames.LoadFont("data/font/SketchRockwell-Bold.ttf"))
+    if (!m_frames.loadFont("data/font/SketchRockwell-Bold.ttf"))
 	{
 		LOG << "ERROR: Loading frames font" << std::endl;
 	}
 }
 
-void Climbers::Unload()
+void Climbers::unload()
 {
 
 }
 
-void Climbers::Update(float GameTime)
+void Climbers::update(float deltaTime)
 {
-	frames.Update(GameTime);
+	m_frames.update(deltaTime);
 }
 
-void Climbers::Draw()
+void Climbers::draw()
 {
-	frames.Draw();
+	m_frames.draw();
 }
 
 

@@ -15,78 +15,78 @@ public:
 	 SplashState();
 	~SplashState();
 
-	void Update(float GameTime);
-	void Draw();
+	void update(float deltaTime);
+	void draw();
 
-	void Load();
-	void Unload();
+	void load();
+	void unload();
 	
 private:
 
 	class InnerState
 	{
 	public:
-		InnerState(SplashState &mySplash);
+        InnerState(SplashState &splash);
 
-		void Update(float GameTime);
-		void Draw();
+		void update(float deltaTime);
+		void draw();
 
 	protected:
-		virtual void myUpdate(float GameTime) = 0;
-		virtual void myDraw() = 0;
+        virtual void inUpdate(float deltaTime) = 0;
+        virtual void inDraw() = 0;
 
-		SplashState &mySplash;
-		float myTimeCount;
-		rgba myFadeColor;
+        SplashState &m_splash;
+        float m_timeCount;
+        rgba m_fadeColor;
 
-		TextureManager* myTexMan;
-		emyl::manager* myAudio;
+        TextureManager* m_texMan;
+        emyl::manager* m_audio;
 	};
 
 	class Starting : public InnerState
 	{
 	public:
-		Starting(SplashState &mySplash);
+        Starting(SplashState &splash);
 
 	protected:
-		void myUpdate(float GameTime);
-		void myDraw();
+        void inUpdate(float deltaTime);
+        void inDraw();
 	};
 
 	class Presents : public InnerState
 	{
 	public:
-		Presents(SplashState &mySplash);
+        Presents(SplashState &splash);
 	protected:
-		void myUpdate(float GameTime);
-		void myDraw();
+        void inUpdate(float deltaTime);
+        void inDraw();
 	};
 
 	class Gameby : public InnerState
 	{
 	public:
-		Gameby(SplashState &mySplash);
+        Gameby(SplashState &splash);
 	protected:
-		void myUpdate(float GameTime);
-		void myDraw();
+        void inUpdate(float deltaTime);
+        void inDraw();
 	};
 
 	class Ending : public InnerState
 	{
 	public:
-		Ending(SplashState &mySplash);
+        Ending(SplashState &splash);
 	protected:
-		void myUpdate(float GameTime);
-		void myDraw();
+        void inUpdate(float deltaTime);
+        void inDraw();
 	};
 
 	friend class InnerState;
-	void ChangeState(SplashState::InnerState *next);
+	void changeState(SplashState::InnerState *next);
 
-	InnerState *myState;
-	InnerState *myNextState;
+    InnerState *m_state;
+    InnerState *m_nextState;
 
-	ALuint myIntroSound;
-	emyl::sound* mySoundHandler;
-	bool myIsAccumFirstFrame;
+    ALuint m_introSound;
+    emyl::sound* m_soundHandler;
+    bool m_isAccumFirstFrame;
 };

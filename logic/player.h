@@ -1,27 +1,29 @@
 #pragma once
 #include "tilemapcharacter.h"
 
+#include <memory>
+
 class World;
 class Player : public TilemapCharacter
 {
 public:
     Player(World &world, int player);
-    virtual void Update(float GameTime);
+    virtual void update(float deltaTime);
 
-    static void Load();
-    static void Unload();
-    void Reset();
+    static void load();
+    static void unload();
+    void reset();
 private:
 
-    static SpriteAnimData *data[2];
+    static std::shared_ptr<SpriteAnimData> s_data[2];
 
     //Mario-like player
-    int player;
-    bool crouched;
-    bool grounded;
-    bool walljumped;
-    char onWall;
-    float jumpTimeLeft;
+    int m_player;
+    bool m_crouched;
+    bool m_grounded;
+    bool m_walljumped;
+    char m_onWall;
+    float m_jumpTimeLeft;
 
     enum {ONWALL_LEFT = -1, ONWALL_NO = 0, ONWALL_RIGHT = 1};
 protected:
@@ -36,6 +38,6 @@ protected:
     virtual bool onUpCollision(int x, int j);
     virtual bool onDownCollision(int x, int j);
 
-    World &world;
+    World &m_world;
 };
 

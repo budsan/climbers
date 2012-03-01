@@ -8,7 +8,7 @@
 #define TILE_SIZE 16
 #define TOWER_WIDE 40
 
-World::World() : map(TILE_SIZE), blockDestroy(NULL), music(NULL)
+World::World() : map(TILE_SIZE), blockDestroy(nullptr), music(nullptr)
 {
 	for (unsigned int i = 0; i < NPLAYERS; i++)
 	{
@@ -24,7 +24,7 @@ World::~World()
 	}
 }
 
-void World::Update(float GameTime)
+void World::update(float deltaTime)
 {
 	if (camMoving)
 	{
@@ -33,26 +33,26 @@ void World::Update(float GameTime)
 			music->play();
 		}
 
-		posCamY += velCamY * GameTime;
+		posCamY += velCamY * deltaTime;
 	}
 
-	map.Update(GameTime);
+	map.update(deltaTime);
 
 	for (unsigned int i = 0; i < NPLAYERS; i++)
 	{
-		float playerRef = players[i]->position().y - 150.0f;
+        float playerRef = players[i]->pos().y - 150.0f;
 		if (posCamY < playerRef) {
 			posCamY =  playerRef;
 			camMoving = true;
 		}
-		players[i]->Update(GameTime);
+		players[i]->update(deltaTime);
 	}
 
 	for(unsigned int i = 0; i < emitters.size(); i++)
 	{
 		ParticleEmitter* emitter = emitters[i];
-		emitter->Update(GameTime);
-		if (emitter->AreThereParticlesLeft())
+		emitter->update(deltaTime);
+        if (emitter->areParticlesLeft())
 		{
 			emitters.erase(emitters.begin()+i);
 			delete emitter;
@@ -61,29 +61,34 @@ void World::Update(float GameTime)
 	}
 }
 
-void World::Draw()
+void World::draw()
 {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	Screen &screen = Screen::Instance();
-	screen.FillWithColor(rgba(0.200f, 0.100f, 0.100f, 1));
+    Screen &screen = Screen::instance();
+    screen.fillWithColor(rgba(0.200f, 0.100f, 0.100f, 1));
 
 	camera.setPos(math::vec2f(TOWER_WIDE*TILE_SIZE*0.5f, posCamY));
-	camera.setOpenGLMatrices();
-	map.Draw(camera.getBounding());
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(camera.getProjectionMatrix().v);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixf(camera.getModelviewMatrix().v);
+
+	map.draw(camera.getBounding());
 
 	std::vector<ParticleEmitter*>::iterator it = emitters.begin();
-	for(; it != emitters.end(); it++) (*it)->Draw();
-	for (unsigned int i = 0; i < NPLAYERS; i++) players[i]->Draw();
+	for(; it != emitters.end(); it++) (*it)->draw();
+	for (unsigned int i = 0; i < NPLAYERS; i++) players[i]->draw();
 }
 
-void World::Load()
+void World::load()
 {
 
-	if (music == NULL)
+    if (music == nullptr)
 	{
 		music = new emyl::stream();
 		music->set_source();
@@ -92,7 +97,7 @@ void World::Load()
 		music->set_volume(0.5f);
 	}
 
-	if (blockDestroy == NULL)
+    if (blockDestroy == nullptr)
 	{
 		std::ifstream file("data/scripts/destroy_block.emp",
 				   std::ifstream::in|
@@ -102,13 +107,13 @@ void World::Load()
 		{
 			blockDestroy = new ParticleEmitter();
 			blockDestroy->read(file);
-			blockDestroy->Load();
+			blockDestroy->load();
 			file.close();
 		}
 	}
 
-	Player::Load();
-	camera.Init();
+	Player::load();
+	camera.init();
 	camera.resizeScreen(600);
 	posCamY = 150;
 	velCamY = 32;
@@ -116,35 +121,35 @@ void World::Load()
 
 	for (unsigned int i = 0; i < NPLAYERS; i++)
 	{
-		players[i]->position() = math::vec2f(20+(i*20), 20);
-		players[i]->Reset();
+        players[i]->pos() = math::vec2f(20+(i*20), 20);
+        players[i]->reset();
 	}
 
-	map.Init(rand(), TOWER_WIDE);
+	map.init(rand(), TOWER_WIDE);
 }
 
-void World::Unload()
+void World::unload()
 {
-	if (music != NULL)
+    if (music != nullptr)
 	{
 		delete music;
-		music = NULL;
+        music = nullptr;
 	}
 
-	if (blockDestroy != NULL)
+    if (blockDestroy != nullptr)
 	{
-		blockDestroy->Unload();
+		blockDestroy->unload();
 		delete blockDestroy;
-		blockDestroy = NULL;
+        blockDestroy = nullptr;
 	}
 
-	Player::Unload();
+	Player::unload();
 }
 
 void World::destroyBlock(int x, int y)
 {
 	map.setColl(x, y, false);
-	if (blockDestroy != NULL)
+    if (blockDestroy != nullptr)
 	{
 		ParticleEmitter *emitter = new ParticleEmitter(*blockDestroy);
 		emitter->setPosition(math::vec2f((x+0.5)*TILE_SIZE,(y+0.5)*TILE_SIZE));

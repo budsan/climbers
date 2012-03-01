@@ -19,14 +19,14 @@ public:
 	unsigned int tilePosX(float x);
 	unsigned int tilePosY(float y);
 
-	float Top(int y);
-	float Bottom(int y);
+    float top(int y);
+    float bottom(int y);
 
-	float Left(int x);
-	float Right(int x);
+    float left(int x);
+    float right(int x);
 
-        float tileSize() {return myTileSize;}
+        float tileSize() {return m_tileSize;}
 
 protected:
-        float myTileSize;
+        float m_tileSize;
 };

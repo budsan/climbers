@@ -16,11 +16,11 @@ public:
 	 World();
 	~World();
 
-	void Update(float GameTime);
-	void Draw();
+	void update(float deltaTime);
+	void draw();
 
-	void   Load();
-	void Unload();
+	void   load();
+	void unload();
 
 	Camera2D camera;
 	RandomTower map;

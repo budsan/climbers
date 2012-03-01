@@ -8,11 +8,11 @@ public:
 	 MenuState();
 	~MenuState();
 
-	void Update(float GameTime);
-	void Draw();
+	void update(float deltaTime);
+	void draw();
 
-	void Load();
-	void Unload();
+	void load();
+	void unload();
 
 private:
 

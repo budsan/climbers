@@ -8,17 +8,17 @@ public:
     Climbers();
 
 protected:
-    void Configure();
+    void configure();
 
-    void   Load();
-    void Unload();
+    void   load();
+    void unload();
 
-    void Update(float GameTime);
-    void Draw();
+    void update(float deltaTime);
+    void draw();
 
     const char *getName();
     const char *getVersion();
 
-    FramesHUD frames;
+    FramesHUD m_frames;
 };
 

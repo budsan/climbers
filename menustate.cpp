@@ -15,22 +15,22 @@ MenuState:: ~MenuState()
 
 }
 
-void MenuState::Load()
+void MenuState::load()
 {
 
 }
 
-void MenuState::Unload()
+void MenuState::unload()
 {
 
 }
 
-void MenuState::Update(float GameTime)
+void MenuState::update(float deltaTime)
 {
-	getGame()->ChangeState(new EngineState());
+	getGame()->changeState(new EngineState());
 }
 
-void MenuState::Draw()
+void MenuState::draw()
 {
 
 

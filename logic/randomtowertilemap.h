@@ -11,26 +11,26 @@ class World;
 class RandomTower : public Tilemap
 {
 public:
-        RandomTower(float myTileSize);
+        RandomTower(float m_tileSize);
 
-	void Init(int seed, int wide);
-	void Update(float GameTime);
-	void Draw(const math::bbox2f &screen);
+    void init(int m_seed, int wide);
+	void update(float deltaTime);
+	void draw(const math::bbox2f &screen);
 
 	void setColl(int x, int y, bool col); //set tile collisionable
 	bool  isColl(int x, int y); //is collisionable
 
 private:
-	math::vec2i sizes;
-	int seed;
-	std::vector<bool> tiles;
-	std::vector<int> rowsid;
+    math::vec2i m_sizes;
+    int m_seed;
+    std::vector<bool> m_tiles;
+    std::vector<int> m_rowsid;
 
 	//MAP < CORD Y, MAP < CORD X, TIMELEFT > >;
-	std::map<int, std::map<int, float> > deletedTiles;
+    std::map<int, std::map<int, float> > m_deletedTiles;
 
 	void addDeletedTile(int x, int y);
-	void updateDeletedTiles(float GameTime);
+	void updateDeletedTiles(float deltaTime);
 	void drawDeletedTiles(int y);
 
 	bool testRowY(int y);

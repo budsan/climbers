@@ -4,23 +4,23 @@
 EngineState:: EngineState() {}
 EngineState::~EngineState() {}
 
-void EngineState::Update(float GameTime)
+void EngineState::update(float deltaTime)
 {
-	myWorld.Update(GameTime);
+	m_world.update(deltaTime);
 }
 
-void EngineState::Load()
+void EngineState::load()
 {
-	myWorld.Load();
+	m_world.load();
 }
 
-void EngineState::Unload()
+void EngineState::unload()
 {
-	myWorld.Unload();
+	m_world.unload();
 }
 
-void EngineState::Draw()
+void EngineState::draw()
 {
-	myWorld.Draw();
+	m_world.draw();
 }
 

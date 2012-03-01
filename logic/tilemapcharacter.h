@@ -8,18 +8,18 @@
 class TilemapCharacter : public SpriteAnim
 {
 public:
-	TilemapCharacter(Tilemap &parent);
-	virtual void Update(float GameTime);
+    TilemapCharacter(Tilemap &m_parent);
+	virtual void update(float deltaTime);
 private:
-	math::vec2f siz;
-	math::vec2f cen;
+    math::vec2f m_siz;
+    math::vec2f m_cen;
 
 protected:
-	math::vec2f acc;
-	math::vec2f vel;
-        math::vec2f fri;
-	math::vec2f vel_lim;
-	float animVelFactor;
+    math::vec2f m_acc;
+    math::vec2f m_vel;
+        math::vec2f m_fri;
+    math::vec2f m_velLim;
+    float m_animVelFactor;
 
 	void ensureAnim(std::string name);
 
@@ -33,8 +33,8 @@ protected:
 	virtual bool onUpCollision(int x, int j);
 	virtual bool onDownCollision(int x, int j);
 
-	std::string lastAnim;
-	Tilemap &parent;
+    std::string m_lastAnim;
+    Tilemap &m_parent;
 
 	virtual void preDrawing();
 

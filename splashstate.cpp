@@ -16,39 +16,39 @@
 
 using namespace std;
 
-SplashState:: SplashState() : myState(NULL), myNextState(NULL), myIntroSound(0)
+SplashState:: SplashState() : m_state(nullptr), m_nextState(nullptr), m_introSound(0)
 {
 
 }
 
 SplashState::~SplashState()
 {
-	Unload();
+	unload();
 }
 
-void SplashState::Load()
+void SplashState::load()
 {
-	if (myState != NULL)
+	if (m_state != nullptr)
 	{
-		delete myState;
+		delete m_state;
 	}
 
-	myState = new Starting(*this);
+	m_state = new Starting(*this);
 
 	//LOADING TEXTURES
-	TextureManager &texman= TextureManager::Instance();
-	texman.UseTexture("logo");
-	texman.UseTexture("presents");
-	texman.UseTexture("gameby");
+	TextureManager &texman= TextureManager::instance();
+    texman.useTexture("logo");
+    texman.useTexture("presents");
+    texman.useTexture("gameby");
 
-	if (myIntroSound == 0)
+	if (m_introSound == 0)
 	{
 		emyl::manager* audiomng = emyl::manager::get_instance();
-		myIntroSound = audiomng->get_buffer("data/sound/intro.ogg");
+		m_introSound = audiomng->get_buffer("data/sound/intro.ogg");
 
-		mySoundHandler = new emyl::sound();
-		mySoundHandler->set_buffer(myIntroSound);
-		mySoundHandler->set_source();
+		m_soundHandler = new emyl::sound();
+		m_soundHandler->set_buffer(m_introSound);
+		m_soundHandler->set_source();
 	}
 
 	//OPENGL INITS
@@ -64,27 +64,27 @@ void SplashState::Load()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	myIsAccumFirstFrame = true;
+	m_isAccumFirstFrame = true;
 }
 
-void SplashState::Unload()
+void SplashState::unload()
 {
-	TextureManager &texman= TextureManager::Instance();
-	texman.DeleteTexture("logo");
-	texman.DeleteTexture("presents");
-	texman.DeleteTexture("gameby");
+	TextureManager &texman= TextureManager::instance();
+    texman.deleteTexture("logo");
+    texman.deleteTexture("presents");
+    texman.deleteTexture("gameby");
 
-	if (myIntroSound) {
+	if (m_introSound) {
 		emyl::manager* mng = emyl::manager::get_instance();
-		delete mySoundHandler;
+		delete m_soundHandler;
 		mng->delete_buffer("data/sound/intro.ogg");
-		myIntroSound = 0;
+		m_introSound = 0;
 	}
 
-	if (myState != NULL)
+	if (m_state != nullptr)
 	{
-		delete myState;
-		myState = NULL;
+		delete m_state;
+		m_state = nullptr;
 	}
 
 	//OPENGL RESTAURE
@@ -99,54 +99,54 @@ void SplashState::Unload()
 
 }
 
-void SplashState::ChangeState(SplashState::InnerState *next)
+void SplashState::changeState(SplashState::InnerState *next)
 {
-	if (myNextState != NULL)
+	if (m_nextState != nullptr)
 	{
-		delete myNextState;
+		delete m_nextState;
 	}
 
-	myNextState = next;
+	m_nextState = next;
 }
 
-void SplashState::Update(float GameTime)
+void SplashState::update(float deltaTime)
 {
-	if (myNextState != NULL)
+	if (m_nextState != nullptr)
 	{
-		if (myState != NULL) delete myState;
-		myState = myNextState;
-		myNextState = NULL;
+		if (m_state != nullptr) delete m_state;
+		m_state = m_nextState;
+		m_nextState = nullptr;
 	}
 
-	myState->Update(GameTime);
+	m_state->update(deltaTime);
 }
 
-void SplashState::Draw()
+void SplashState::draw()
 {
-	myState->Draw();
+	m_state->draw();
 }
 
 //-STATE---------------------------------------------------------------------//
 
-SplashState::InnerState::InnerState(SplashState &mySplash) : mySplash(mySplash), myTimeCount(0)
+SplashState::InnerState::InnerState(SplashState &m_splash) : m_splash(m_splash), m_timeCount(0)
 {
-	myTexMan = TextureManager::pInstance();
-	myAudio = emyl::manager::get_instance();
+    m_texMan = TextureManager::ptrInstance();
+	m_audio = emyl::manager::get_instance();
 }
 
-void SplashState::InnerState::Update(float GameTime)
+void SplashState::InnerState::update(float deltaTime)
 {
-	myUpdate(GameTime);
-	myTimeCount += GameTime;
+	inUpdate(deltaTime);
+	m_timeCount += deltaTime;
 }
 
-void SplashState::InnerState::Draw()
+void SplashState::InnerState::draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	myDraw();
+	inDraw();
 
-	Screen::Instance().FillWithColor(myFadeColor);
-	if (mySplash.myIsAccumFirstFrame) mySplash.myIsAccumFirstFrame = false;
+    Screen::instance().fillWithColor(m_fadeColor);
+	if (m_splash.m_isAccumFirstFrame) m_splash.m_isAccumFirstFrame = false;
 	else
 	{
 		glAccum(GL_ACCUM, ACUMM_NEW_FRAME_MULT);
@@ -159,79 +159,79 @@ void SplashState::InnerState::Draw()
 
 //-STARTING-------------------------------------------------------------------//
 
-SplashState::Starting::Starting(SplashState &mySplash) : InnerState(mySplash)
+SplashState::Starting::Starting(SplashState &splash) : InnerState(splash)
 {
-	myFadeColor = rgba(0,0,0,1);
+	m_fadeColor = rgba(0,0,0,1);
 }
 
-void SplashState::Starting::myUpdate(float GameTime)
+void SplashState::Starting::inUpdate(float deltaTime)
 {
 	// De 0,7segs a 1seg hacemos fade
-	if(myTimeCount > 0.7f && myTimeCount < 0.999f)
+	if(m_timeCount > 0.7f && m_timeCount < 0.999f)
 	{
-		myFadeColor = rgba(1.0f - (1.0f - myTimeCount)/(1.0f - 0.7f));
-		myFadeColor.a = 1.0f; //A
+		m_fadeColor = rgba(1.0f - (1.0f - m_timeCount)/(1.0f - 0.7f));
+		m_fadeColor.a = 1.0f; //A
 	}
 
 	// Pasado el segundo, cambiamos de estado y el fade a blanco
-	if(myTimeCount >= 1.0f)
+	if(m_timeCount >= 1.0f)
 	{
-		myFadeColor = rgba(1.0f);
-		mySplash.ChangeState(new SplashState::Presents(mySplash));
-		mySplash.mySoundHandler->play();
+		m_fadeColor = rgba(1.0f);
+        m_splash.changeState(new SplashState::Presents(m_splash));
+		m_splash.m_soundHandler->play();
 	}
 }
 
-void SplashState::Starting::myDraw()
+void SplashState::Starting::inDraw()
 {
 
 }
 
 //-PRESENTS------------------------------------------------------------------//
 
-SplashState::Presents::Presents(SplashState &mySplash) : InnerState(mySplash)
+SplashState::Presents::Presents(SplashState &splash) : InnerState(splash)
 {
-	myFadeColor = rgba(1.0f);
+	m_fadeColor = rgba(1.0f);
 }
 
-void SplashState::Presents::myUpdate(float GameTime)
+void SplashState::Presents::inUpdate(float deltaTime)
 {
 	// Fade out de blanco a transparente
-	if(myTimeCount < 0.3f) {
-		myFadeColor.a = (0.3f - myTimeCount)/(0.3f);
+	if(m_timeCount < 0.3f) {
+		m_fadeColor.a = (0.3f - m_timeCount)/(0.3f);
 	}
 	//Esperamos un 0.3s a 3,7s a que se muestre el PRESENTS
-	else if(myTimeCount >= 0.3f && myTimeCount <= 3.5f) {
-		myFadeColor.a = 0.0f;
+	else if(m_timeCount >= 0.3f && m_timeCount <= 3.5f) {
+		m_fadeColor.a = 0.0f;
 	}
 	//Fade in a blanco de 3 milisegundos
-	else if(myTimeCount > 3.5f && myTimeCount < 3.799f) {
-		myFadeColor.a = 1.0f - (3.8f - myTimeCount)/(3.8f - 3.5f);
+	else if(m_timeCount > 3.5f && m_timeCount < 3.799f) {
+		m_fadeColor.a = 1.0f - (3.8f - m_timeCount)/(3.8f - 3.5f);
 	}
 	//Y finalmente cambiamos el estado y el fade a blanco
-	else if(myTimeCount >= 3.8f) {
-		myFadeColor.a = 1.0f;
-		mySplash.ChangeState(new SplashState::Gameby(mySplash));
+	else if(m_timeCount >= 3.8f) {
+		m_fadeColor.a = 1.0f;
+        m_splash.changeState(new SplashState::Gameby(m_splash));
 	}
 }
 
-void SplashState::Presents::myDraw()
+void SplashState::Presents::inDraw()
 {
-	Screen &gfx = Screen::Instance();
-	gfx.FillWithColor(rgba(1,1,1,1));
+	Screen &gfx = Screen::instance();
+    gfx.fillWithColor(rgba(1,1,1,1));
 	float ratio = gfx.getRatio();
 
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_PROJECTION); glLoadIdentity();
-	float fov = 60 -(myTimeCount*myTimeCount/16.0f)*10;
+	float fov = 60 -(m_timeCount*m_timeCount/16.0f)*10;
 	gluPerspective(fov,ratio, 0.1, 150.0);
 
 	glMatrixMode(GL_MODELVIEW); glLoadIdentity();
 	gluLookAt(-1.50f, 1.50f, 4.00f,
-		  -0.25f, -(myTimeCount*myTimeCount/80), 0.00f,
+		  -0.25f, -(m_timeCount*m_timeCount/80), 0.00f,
 		   0.00f, 1.00f, 0.00f);
 
-	myTexMan->UseTexture("logo");
+    m_texMan->useTexture("logo");
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glBegin(GL_QUADS);
@@ -257,14 +257,14 @@ void SplashState::Presents::myDraw()
 	glMatrixMode(GL_MODELVIEW); glLoadIdentity();
 	glTranslatef(0,-0.3175f,-0.5f);
 
-	const Texture &presents = myTexMan->getTexture("presents");
+	const Texture &presents = m_texMan->getTexture("presents");
 	presents.setFiltering(GL_NEAREST);
 	presents.setWrap(GL_CLAMP_TO_BORDER);
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, rgba(1,1,1,1).raw());
 
 	//VARIABLE DISTANCE BETWEEN LETTERS
 	//EACH ARE SIZED (1/16)x(1/16), 0.0f <= SPLASH_TIMECOUNT <= 4.0f
-	const float stride = (myTimeCount*myTimeCount)/(16.0f * 9.0f);
+	const float stride = (m_timeCount*m_timeCount)/(16.0f * 9.0f);
 	float pos;
 
 	//CENTER LETTERS, STABLISH INITIAL POSSITION.
@@ -304,37 +304,37 @@ void SplashState::Presents::myDraw()
 
 //-GAMEBY--------------------------------------------------------------------//
 
-SplashState::Gameby::Gameby(SplashState &mySplash) : InnerState(mySplash)
+SplashState::Gameby::Gameby(SplashState &splash) : InnerState(splash)
 {
-    myFadeColor = rgba(1.0f);
+    m_fadeColor = rgba(1.0f);
 }
 
-void SplashState::Gameby::myUpdate(float GameTime)
+void SplashState::Gameby::inUpdate(float deltaTime)
 {
 	//Fade out de blanco a transparente de 0.6s
-	if(myTimeCount <= 0.6f) {
-		myFadeColor.a = (0.6f - myTimeCount)/(0.6f); //A
+	if(m_timeCount <= 0.6f) {
+		m_fadeColor.a = (0.6f - m_timeCount)/(0.6f); //A
 	}
 	//mostramos GAMEBY de 0.3s a 4.4s
-	else if(myTimeCount >= 0.3f && myTimeCount <= 4.4f) {
-		myFadeColor.a = 0.0f; //A
+	else if(m_timeCount >= 0.3f && m_timeCount <= 4.4f) {
+		m_fadeColor.a = 0.0f; //A
 	}
 	//Fade in de transparente a negro de 0.6s
-	else if(myTimeCount > 4.4f && myTimeCount < 5.0f) {
-		myFadeColor   = rgba(0.0f);
-		myFadeColor.a = 1.0f - (5.0f - myTimeCount)/(5.0f - 4.4f); //A
+	else if(m_timeCount > 4.4f && m_timeCount < 5.0f) {
+		m_fadeColor   = rgba(0.0f);
+		m_fadeColor.a = 1.0f - (5.0f - m_timeCount)/(5.0f - 4.4f); //A
 	}
 	//Y finalmente hemos acabado y cambiamos de estado.
-	else if(myTimeCount >= 5.0f) {
-		myFadeColor.a = 1.0f; //A
-		mySplash.ChangeState(new SplashState::Ending(mySplash));
+	else if(m_timeCount >= 5.0f) {
+		m_fadeColor.a = 1.0f; //A
+        m_splash.changeState(new SplashState::Ending(m_splash));
 	}
 }
 
-void SplashState::Gameby::myDraw()
+void SplashState::Gameby::inDraw()
 {
-	Screen &gfx = Screen::Instance();
-	gfx.FillWithColor(rgba(1,1,1,1));
+	Screen &gfx = Screen::instance();
+    gfx.fillWithColor(rgba(1,1,1,1));
 	float ratio = gfx.getRatio();
 
 	glEnable(GL_TEXTURE_2D);
@@ -345,7 +345,7 @@ void SplashState::Gameby::myDraw()
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	myTexMan->UseTexture("gameby");
+    m_texMan->useTexture("gameby");
 
 	glBegin(GL_QUADS);
 	 glColor4f(1, 1, 1, 1);
@@ -358,21 +358,21 @@ void SplashState::Gameby::myDraw()
 
 //-ENDING--------------------------------------------------------------------//
 
-SplashState::Ending::Ending(SplashState &mySplash) : InnerState(mySplash)
+SplashState::Ending::Ending(SplashState &splash) : InnerState(splash)
 {
-    myFadeColor   = rgba(0.0f, 0.0f, 0.0f, 1.0f);
+    m_fadeColor   = rgba(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-void SplashState::Ending::myUpdate(float GameTime)
+void SplashState::Ending::inUpdate(float deltaTime)
 {
 	//Esperamos 1 segundo y nos vamos al menu
-	if(myTimeCount >= 1.0f)
+	if(m_timeCount >= 1.0f)
 	{
-		mySplash.getGame()->ChangeState(new MenuState());
+        m_splash.getGame()->changeState(new MenuState());
 	}
 }
 
-void SplashState::Ending::myDraw()
+void SplashState::Ending::inDraw()
 {
 
 }
