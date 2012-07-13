@@ -1,9 +1,8 @@
 #pragma once
 
-#include "audio/emyl.h"
-#include "graphics/camera2d.h"
-
-#include "tools/particleemitter.h"
+#include "guyframework/audio/emyl.h"
+#include "guyframework/graphics/camera2d.h"
+#include "guyframework/tools/particleemitter.h"
 
 #include "randomtowertilemap.h"
 #include "player.h"
@@ -22,21 +21,21 @@ public:
 	void   load();
 	void unload();
 
-	Camera2D camera;
-	RandomTower map;
-	Player *players[NPLAYERS];
+	Guy::Camera2D m_camera;
+	RandomTower m_map;
+	Player *m_players[NPLAYERS];
 
-	float posCamY;
-	float velCamY;
-	bool camMoving;
+	float m_posCamY;
+	float m_velCamY;
+	bool m_camMoving;
 
-	std::vector<ParticleEmitter*> emitters;
+	std::vector<Guy::ParticleEmitter*> m_emitters;
 
 	//CONTENT
-	ParticleEmitter *blockDestroy;
-	emyl::stream *music;
+	Guy::ParticleEmitter *m_blockDestroy;
+	emyl::stream *m_music;
 
-	//TODO: Hacerlo por eventos.
+	//TODO: Do this with signals
 	void destroyBlock(int x, int y);
 };
 

@@ -1,7 +1,9 @@
 #pragma once
-#include "tilemapcharacter.h"
 
-#include <memory>
+#include "tilemapcharacter.h"
+#include "guyframework/audio/emyl.h"
+
+#include <boost/shared_ptr.hpp>
 
 class World;
 class Player : public TilemapCharacter
@@ -15,15 +17,18 @@ public:
     void reset();
 private:
 
-    static std::shared_ptr<SpriteAnimData> s_data[2];
+    static boost::shared_ptr<Guy::SpriteAnimData> s_sprData[2];
+    static boost::shared_ptr<emyl::sound> s_sndHdl;
+    static ALuint s_sndJump;
+    static ALuint s_sndRoofHit;
 
     //Mario-like player
-    int m_player;
-    bool m_crouched;
-    bool m_grounded;
-    bool m_walljumped;
-    char m_onWall;
-    float m_jumpTimeLeft;
+    int player;
+    bool crouched;
+    bool grounded;
+    bool walljumped;
+    char onWall;
+    float jumpTimeLeft;
 
     enum {ONWALL_LEFT = -1, ONWALL_NO = 0, ONWALL_RIGHT = 1};
 protected:
@@ -38,6 +43,6 @@ protected:
     virtual bool onUpCollision(int x, int j);
     virtual bool onDownCollision(int x, int j);
 
-    World &m_world;
+    World &world;
 };
 

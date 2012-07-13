@@ -1,16 +1,12 @@
 #include "climbers.h"
 
+#include "guyframework/log.h"
+#include "actionsclimber.h"
+
 #include <iostream>
 
-#include "gameframework/log.h"
-#include "gameframework/settings.h"
-
-#include "enginestate.h"
-#include "splashstate.h"
-#include "keys.h"
-
 #define GAME_NAME "Climbers"
-#define GAME_VERSION "0.1"
+#define GAME_VERSION "0.2"
 
 Climbers::Climbers()
 {
@@ -27,53 +23,50 @@ const char *Climbers::getVersion()
     return GAME_VERSION;
 }
 
-void Climbers::configure()
+void Climbers::init()
 {
-	setFramesPerSecond(0);
-    setStableDeltaTime(false);
-    changeState(new EngineState());
+	Guy::Environment &env = Guy::Environment::instance();
+	env.getScreenManager().setMode(Guy::Screen::Mode(800, 600), false);
 
-	Keybinds k(NUMPLAYERS, K_SIZE);
-	k[0][K_LEFT ].setDefault(SDLK_LEFT);
-	k[0][K_RIGHT].setDefault(SDLK_RIGHT);
-	k[0][K_DOWN ].setDefault(SDLK_DOWN);
-	k[0][K_UP   ].setDefault(SDLK_UP);
-	k[0][K_JUMP ].setDefault(SDLK_END);
-	k[0][K_SPECIAL].setDefault(SDLK_DELETE);
+	Guy::Input &in = env.getInputManager();
+	in.addFocusListener(this);
 
-	k[1][K_LEFT ].setDefault(SDLK_a);
-	k[1][K_RIGHT].setDefault(SDLK_d);
-	k[1][K_DOWN ].setDefault(SDLK_s);
-	k[1][K_UP   ].setDefault(SDLK_w);
-	k[1][K_JUMP ].setDefault(SDLK_h);
-	k[1][K_SPECIAL].setDefault(SDLK_g);
+	ActionsClimber* actionsClimberOne = new ActionsClimberOne();
+	in.getKeyboard().addListener(actionsClimberOne);
 
-    m_settings->setKeybinds(k);
-    m_settings->get("ScreenWidth" )->set(800);
-    m_settings->get("ScreenHeight")->set(600);
-    m_settings->get("Fullscreen"  )->set(false);
+	ActionsClimber* actionsClimberTwo = new ActionsClimberTwo();
+	in.getKeyboard().addListener(actionsClimberTwo);
+
+	std::vector<Actions*> &actions = Actions::instance();
+	actions.push_back(actionsClimberOne);
+	actions.push_back(actionsClimberTwo);
 }
 
 void Climbers::load()
 {
-    if (!m_frames.loadFont("data/font/SketchRockwell-Bold.ttf"))
+	if (!m_frames.loadFont("data/font/SketchRockwell-Bold.ttf"))
 	{
-		LOG << "ERROR: Loading frames font" << std::endl;
+		Guy::printLog("ERROR: Loading frames font\n");
 	}
+
+	m_world.load();
 }
 
 void Climbers::unload()
 {
-
+	m_world.unload();
 }
 
 void Climbers::update(float deltaTime)
 {
+	m_world.update(deltaTime);
 	m_frames.update(deltaTime);
+	Actions::endOfFrameAll();
 }
 
 void Climbers::draw()
 {
+	m_world.draw();
 	m_frames.draw();
 }
 

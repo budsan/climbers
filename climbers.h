@@ -1,14 +1,16 @@
 #pragma once
-#include "gameframework/game.h"
-#include "gameframework/graphics/tools/frameshud.h"
+#include "guyframework/game.h"
+#include "guyframework/graphics/tools/frameshud.h"
 
-class Climbers : public Game
+#include "logic/world.h"
+
+class Climbers : public Guy::Game, public Guy::FocusListener
 {
 public:
     Climbers();
 
 protected:
-    void configure();
+    void init();
 
     void   load();
     void unload();
@@ -19,6 +21,7 @@ protected:
     const char *getName();
     const char *getVersion();
 
-    FramesHUD m_frames;
+    Guy::FramesHUD m_frames;
+    World m_world;
 };
 

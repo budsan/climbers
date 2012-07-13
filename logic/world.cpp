@@ -1,18 +1,20 @@
 #include "world.h"
-#include "graphics/graphics.h"
-#include "graphics/screen.h"
-#include "tools/transition.h"
+
+#include "guyframework/environment.h"
+#include "guyframework/graphics/graphics.h"
+#include "guyframework/graphics/screen.h"
+#include "guyframework/tools/transition.h"
 
 #include <fstream>
 
-#define TILE_SIZE 16
-#define TOWER_WIDE 40
+static const int TILE_SIZE  = 16;
+static const int TOWER_WIDE = 40;
 
-World::World() : map(TILE_SIZE), blockDestroy(nullptr), music(nullptr)
+World::World() : m_map(TILE_SIZE), m_blockDestroy(NULL), m_music(NULL)
 {
 	for (unsigned int i = 0; i < NPLAYERS; i++)
 	{
-		players[i] = new Player(*this, i);
+		m_players[i] = new Player(*this, i);
 	}
 }
 
@@ -20,41 +22,41 @@ World::~World()
 {
 	for (unsigned int i = 0; i < NPLAYERS; i++)
 	{
-		delete players[i];
+		delete m_players[i];
 	}
 }
 
 void World::update(float deltaTime)
 {
-	if (camMoving)
+	if (m_camMoving)
 	{
-		if (!music->playing())
+		if (!m_music->playing())
 		{
-			music->play();
+			m_music->play();
 		}
 
-		posCamY += velCamY * deltaTime;
+		m_posCamY += m_velCamY * deltaTime;
 	}
 
-	map.update(deltaTime);
+	m_map.Update(deltaTime);
 
 	for (unsigned int i = 0; i < NPLAYERS; i++)
 	{
-        float playerRef = players[i]->pos().y - 150.0f;
-		if (posCamY < playerRef) {
-			posCamY =  playerRef;
-			camMoving = true;
+		float playerRef = m_players[i]->pos().y - 150.0f;
+		if (m_posCamY < playerRef) {
+			m_posCamY =  playerRef;
+			m_camMoving = true;
 		}
-		players[i]->update(deltaTime);
+		m_players[i]->update(deltaTime);
 	}
 
-	for(unsigned int i = 0; i < emitters.size(); i++)
+	for(unsigned int i = 0; i < m_emitters.size(); i++)
 	{
-		ParticleEmitter* emitter = emitters[i];
+		Guy::ParticleEmitter* emitter = m_emitters[i];
 		emitter->update(deltaTime);
-        if (emitter->areParticlesLeft())
+		if (emitter->areParticlesLeft())
 		{
-			emitters.erase(emitters.begin()+i);
+			m_emitters.erase(m_emitters.begin()+i);
 			delete emitter;
 			i--;
 		}
@@ -68,36 +70,36 @@ void World::draw()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    Screen &screen = Screen::instance();
-    screen.fillWithColor(rgba(0.200f, 0.100f, 0.100f, 1));
+	Guy::Screen &screen = Guy::Environment::instance().getScreenManager();
+	screen.fillWithColor(Guy::rgba(0.200f, 0.100f, 0.100f, 1));
 
-	camera.setPos(math::vec2f(TOWER_WIDE*TILE_SIZE*0.5f, posCamY));
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf(camera.getProjectionMatrix().v);
+	m_camera.setPos(math::vec2f(TOWER_WIDE*TILE_SIZE*0.5f, m_posCamY));
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(camera.getModelviewMatrix().v);
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(m_camera.getProjectionMatrix().v);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(m_camera.getModelviewMatrix().v);
 
-	map.draw(camera.getBounding());
+	m_map.Draw(m_camera.getBounding());
 
-	std::vector<ParticleEmitter*>::iterator it = emitters.begin();
-	for(; it != emitters.end(); it++) (*it)->draw();
-	for (unsigned int i = 0; i < NPLAYERS; i++) players[i]->draw();
+	std::vector<Guy::ParticleEmitter*>::iterator it = m_emitters.begin();
+	for(; it != m_emitters.end(); it++) (*it)->draw();
+	for (unsigned int i = 0; i < NPLAYERS; i++) m_players[i]->draw();
 }
 
 void World::load()
 {
 
-    if (music == nullptr)
+	if (m_music == NULL)
 	{
-		music = new emyl::stream();
-		music->set_source();
-		music->load("data/sound/melody.ogg");
-		music->set_loop(true);
-		music->set_volume(0.5f);
+		m_music = new emyl::stream();
+		m_music->set_source();
+		m_music->load("data/sound/melody.ogg");
+		m_music->set_loop(true);
+		m_music->set_volume(0.5f);
 	}
 
-    if (blockDestroy == nullptr)
+	if (m_blockDestroy == NULL)
 	{
 		std::ifstream file("data/scripts/destroy_block.emp",
 				   std::ifstream::in|
@@ -105,42 +107,42 @@ void World::load()
 
 		if (file.is_open())
 		{
-			blockDestroy = new ParticleEmitter();
-			blockDestroy->read(file);
-			blockDestroy->load();
+			m_blockDestroy = new Guy::ParticleEmitter();
+			m_blockDestroy->read(file);
+			m_blockDestroy->load();
 			file.close();
 		}
 	}
 
 	Player::load();
-	camera.init();
-	camera.resizeScreen(600);
-	posCamY = 150;
-	velCamY = 32;
-	camMoving = false;
+	m_camera.init();
+	m_camera.resizeScreen(600);
+	m_posCamY = 150;
+	m_velCamY = 32;
+	m_camMoving = false;
 
 	for (unsigned int i = 0; i < NPLAYERS; i++)
 	{
-        players[i]->pos() = math::vec2f(20+(i*20), 20);
-        players[i]->reset();
+		m_players[i]->pos() = math::vec2f(20+(i*20), 20);
+		m_players[i]->reset();
 	}
 
-	map.init(rand(), TOWER_WIDE);
+	m_map.Init(rand(), TOWER_WIDE);
 }
 
 void World::unload()
 {
-    if (music != nullptr)
+	if (m_music != NULL)
 	{
-		delete music;
-        music = nullptr;
+		delete m_music;
+		m_music = NULL;
 	}
 
-    if (blockDestroy != nullptr)
+	if (m_blockDestroy != NULL)
 	{
-		blockDestroy->unload();
-		delete blockDestroy;
-        blockDestroy = nullptr;
+		m_blockDestroy->unload();
+		delete m_blockDestroy;
+		m_blockDestroy = NULL;
 	}
 
 	Player::unload();
@@ -148,11 +150,11 @@ void World::unload()
 
 void World::destroyBlock(int x, int y)
 {
-	map.setColl(x, y, false);
-    if (blockDestroy != nullptr)
+	m_map.setColl(x, y, false);
+	if (m_blockDestroy != NULL)
 	{
-		ParticleEmitter *emitter = new ParticleEmitter(*blockDestroy);
+		Guy::ParticleEmitter *emitter = new Guy::ParticleEmitter(*m_blockDestroy);
 		emitter->setPosition(math::vec2f((x+0.5)*TILE_SIZE,(y+0.5)*TILE_SIZE));
-		emitters.push_back(emitter);
+		m_emitters.push_back(emitter);
 	}
 }

@@ -1,27 +1,27 @@
 #pragma once
 
 #include "graphics/spriteanim.h"
-#include "math/vec2.h"
+#include "math/algebra3.h"
 
 #include "tilemap.h"
 
-class TilemapCharacter : public SpriteAnim
+class TilemapCharacter : public Guy::SpriteAnim
 {
 public:
-    TilemapCharacter(Tilemap &m_parent);
+	TilemapCharacter(Tilemap &m_parent);
 	virtual void update(float deltaTime);
 private:
-    math::vec2f m_siz;
-    math::vec2f m_cen;
+	math::vec2f siz;
+	math::vec2f cen;
 
 protected:
-    math::vec2f m_acc;
-    math::vec2f m_vel;
-        math::vec2f m_fri;
-    math::vec2f m_velLim;
-    float m_animVelFactor;
+	math::vec2f m_acc;
+	math::vec2f m_vel;
+	math::vec2f m_fri;
+	math::vec2f m_velLim;
+	float m_animVelFactor;
 
-	void ensureAnim(std::string name);
+	bool ensureAnim(std::string name);
 
 	virtual void noLeftCollision();
 	virtual void noRightCollision();
@@ -33,10 +33,8 @@ protected:
 	virtual bool onUpCollision(int x, int j);
 	virtual bool onDownCollision(int x, int j);
 
-    std::string m_lastAnim;
-    Tilemap &m_parent;
+	std::string m_lastAnim;
+	Tilemap &m_parent;
 
 	virtual void preDrawing();
-
-        friend class TilemapCollider;
 };

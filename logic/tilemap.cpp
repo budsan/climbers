@@ -1,7 +1,7 @@
 #include "tilemap.h"
 #include <math.h>
 
-Tilemap::Tilemap(float unitsPerTile) : m_tileSize(unitsPerTile)
+Tilemap::Tilemap(float unitsPerTile) : m_unitsPerTile(unitsPerTile)
 {
 }
 
@@ -13,37 +13,37 @@ math::vec2i Tilemap::tilePos(math::vec2f pos)
 math::vec2i Tilemap::tilePos(float x, float y)
 {
 	return math::vec2i(
-                floor(x/m_tileSize),
-                floor(y/m_tileSize));
+		(int) floor(x/m_unitsPerTile),
+		(int) floor(y/m_unitsPerTile));
 }
 
-unsigned int Tilemap::tilePosX(float x)
+int Tilemap::tilePosX(float x)
 {
-        return floor(x/m_tileSize);
+	return (int) floor(x/m_unitsPerTile);
 }
 
-unsigned int Tilemap::tilePosY(float y)
+int Tilemap::tilePosY(float y)
 {
-        return floor(y/m_tileSize);
+	return (int) floor(y/m_unitsPerTile);
 }
 
-float Tilemap::top(int y)
+float Tilemap::Top(int y)
 {
-        return float(y+1)*m_tileSize;
+	return float(y+1)*m_unitsPerTile;
 }
 
-float Tilemap::bottom(int y)
+float Tilemap::Bottom(int y)
 {
-        return float(y)*m_tileSize;
+	return float(y)*m_unitsPerTile;
 }
 
-float Tilemap::left(int x)
+float Tilemap::Left(int x)
 {
-        return float(x)*m_tileSize;
+	return float(x)*m_unitsPerTile;
 }
 
-float Tilemap::right(int x)
+float Tilemap::Right(int x)
 {
-        return float(x+1)*m_tileSize;
+	return float(x+1)*m_unitsPerTile;
 }
 
