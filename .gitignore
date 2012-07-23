@@ -1,0 +1,8 @@
+debug/
+release/
+Makefile*
+*.user
+*.o
+debug.txt
+object_script.*
+SDL.dll
