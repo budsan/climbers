@@ -18,8 +18,8 @@ protected:
     void update(float deltaTime);
     void draw();
 
-    const char *getName();
-    const char *getVersion();
+    const char *name();
+    const char *version();
 
     Guy::FramesHUD m_frames;
     World m_world;

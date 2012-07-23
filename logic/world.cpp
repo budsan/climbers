@@ -70,15 +70,15 @@ void World::draw()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	Guy::Screen &screen = Guy::Environment::instance().getScreenManager();
+	Guy::Screen &screen = Guy::Environment::instance().screen();
 	screen.fillWithColor(Guy::rgba(0.200f, 0.100f, 0.100f, 1));
 
 	m_camera.setPos(math::vec2f(TOWER_WIDE*TILE_SIZE*0.5f, m_posCamY));
 
 	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(m_camera.getProjectionMatrix().v);
+	glLoadMatrixf(m_camera.projectionMatrix().v);
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(m_camera.getModelviewMatrix().v);
+	glLoadMatrixf(m_camera.viewMatrix().v);
 
 	m_map.Draw(m_camera.getBounding());
 

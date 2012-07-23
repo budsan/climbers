@@ -13,12 +13,12 @@ Climbers::Climbers()
 
 }
 
-const char *Climbers::getName()
+const char *Climbers::name()
 {
     return GAME_NAME;
 }
 
-const char *Climbers::getVersion()
+const char *Climbers::version()
 {
     return GAME_VERSION;
 }
@@ -26,16 +26,16 @@ const char *Climbers::getVersion()
 void Climbers::init()
 {
 	Guy::Environment &env = Guy::Environment::instance();
-	env.getScreenManager().setMode(Guy::Screen::Mode(800, 600), false);
+	env.screen().setMode(Guy::Screen::Mode(800, 600), false);
 
-	Guy::Input &in = env.getInputManager();
+	Guy::Input &in = env.input();
 	in.addFocusListener(this);
 
 	ActionsClimber* actionsClimberOne = new ActionsClimberOne();
-	in.getKeyboard().addListener(actionsClimberOne);
+	in.keyboard().addListener(actionsClimberOne);
 
 	ActionsClimber* actionsClimberTwo = new ActionsClimberTwo();
-	in.getKeyboard().addListener(actionsClimberTwo);
+	in.keyboard().addListener(actionsClimberTwo);
 
 	std::vector<Actions*> &actions = Actions::instance();
 	actions.push_back(actionsClimberOne);

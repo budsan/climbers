@@ -1,6 +1,8 @@
 include(guyframework/guyframework.pri)
 TARGET = climbers
 
+INCLUDEPATH += .
+
 SOURCES += \
     main.cpp \
     logic/world.cpp \
